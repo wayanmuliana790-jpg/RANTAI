@@ -1,0 +1,1027 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Lab Maya Rantai Makanan - SD N 2 Lodtunduh</title>
+    <!-- Tailwind CSS CDN -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- FontAwesome for Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <!-- Google Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Fredoka:wght@400;500;600;700&family=Nunito:wght@600;700;800&display=swap" rel="stylesheet">
+
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        brand: {
+                            green: '#2e7d32',
+                            lightgreen: '#81c784',
+                            yellow: '#fbc02d',
+                            orange: '#f57c00',
+                            blue: '#0288d1',
+                            cream: '#fbf8ed',
+                            dark: '#1b5e20'
+                        }
+                    },
+                    fontFamily: {
+                        fredoka: ['Fredoka', 'sans-serif'],
+                        nunito: ['Nunito', 'sans-serif']
+                    }
+                }
+            }
+        }
+    </script>
+
+    <style>
+        * {
+            user-select: none;
+            -webkit-user-select: none;
+            touch-action: manipulation;
+        }
+        body, html {
+            margin: 0;
+            padding: 0;
+            width: 100vw;
+            height: 100vh;
+            overflow: hidden;
+            font-family: 'Nunito', sans-serif;
+            background-color: #1a2e05;
+        }
+        /* Lock 16:9 aspect ratio or screen filling canvas */
+        #app-wrapper {
+            width: 100vw;
+            height: 100vh;
+            max-width: 177.78vh; /* 16:9 ratio */
+            max-height: 56.25vw;
+            margin: auto;
+            position: absolute;
+            top: 0; bottom: 0; left: 0; right: 0;
+            background: linear-gradient(135deg, #e8f5e9 0%, #c8e6c9 100%);
+            display: flex;
+            flex-direction: column;
+            overflow: hidden;
+            box-shadow: 0 0 50px rgba(0,0,0,0.5);
+        }
+
+        /* Custom Scrollbars for tab content if content slightly exceeds */
+        .custom-scroll::-webkit-scrollbar {
+            width: 6px;
+        }
+        .custom-scroll::-webkit-scrollbar-track {
+            background: rgba(0,0,0,0.05);
+            border-radius: 10px;
+        }
+        .custom-scroll::-webkit-scrollbar-thumb {
+            background: #81c784;
+            border-radius: 10px;
+        }
+
+        /* Animations */
+        @keyframes pulse-slow {
+            0%, 100% { transform: scale(1); }
+            50% { transform: scale(1.05); }
+        }
+        .animate-pulse-slow {
+            animation: pulse-slow 2s infinite ease-in-out;
+        }
+
+        @keyframes energy-flow {
+            0% { transform: translateX(-100%); opacity: 0; }
+            50% { opacity: 1; }
+            100% { transform: translateX(100%); opacity: 0; }
+        }
+        .energy-beam {
+            animation: energy-flow 1.5s infinite linear;
+        }
+
+        /* Drop Zone Highlight */
+        .drop-zone.drag-over {
+            background-color: #a5d6a7 !important;
+            border-color: #2e7d32 !important;
+            transform: scale(1.02);
+        }
+
+        .organism-card {
+            transition: all 0.2s ease;
+            cursor: grab;
+        }
+        .organism-card:active {
+            cursor: grabbing;
+            transform: scale(0.95);
+        }
+    </style>
+</head>
+<body class="flex items-center justify-center">
+
+    <!-- MAIN CONTAINER (16:9 aspect ratio target) -->
+    <div id="app-wrapper" class="relative rounded-lg overflow-hidden border-4 border-emerald-800">
+
+        <!-- AUDIO TOGGLE (TOP RIGHT FIXED) -->
+        <button id="btn-audio-toggle" onclick="toggleAudio()" class="absolute top-3 right-3 z-50 bg-white/80 hover:bg-white p-2.5 rounded-full shadow-md text-emerald-800 transition border-2 border-emerald-600 flex items-center justify-center w-10 h-10">
+            <i id="audio-icon" class="fas fa-volume-up text-lg"></i>
+        </button>
+
+        <!-- ========================================== -->
+        <!-- SPLASH SCREEN                              -->
+        <!-- ========================================== -->
+        <div id="splash-screen" class="absolute inset-0 z-40 bg-gradient-to-br from-emerald-900 via-green-800 to-teal-900 flex flex-col items-center justify-between p-6 text-white text-center">
+            
+            <!-- Header Logos & Title -->
+            <div class="mt-4 flex flex-col items-center">
+                <div class="inline-flex items-center gap-2 bg-white/10 px-4 py-1.5 rounded-full backdrop-blur-md mb-3 border border-white/20">
+                    <i class="fas fa-school text-yellow-300 text-sm"></i>
+                    <span class="text-xs md:text-sm font-semibold tracking-wide uppercase text-emerald-100">SD N 2 Lodtunduh • IPAS Kelas 5 Fase C</span>
+                </div>
+                <h1 class="font-fredoka text-2xl md:text-4xl lg:text-5xl text-yellow-300 drop-shadow-md leading-tight">
+                    LAB MAYA INTERAKTIF<br>
+                    <span class="text-white">RANTAI MAKANAN</span>
+                </h1>
+                <p class="text-xs md:text-sm text-emerald-100 mt-2 max-w-lg">
+                    Mari menjelajahi dan mensimulasikan aliran energi dalam ekosistem secara interaktif!
+                </p>
+            </div>
+
+            <!-- Central Mascot / Graphic -->
+            <div class="relative my-auto flex items-center justify-center">
+                <div class="w-32 h-32 md:w-44 md:h-44 bg-emerald-700/50 rounded-full flex items-center justify-center border-4 border-yellow-400/80 animate-pulse-slow shadow-2xl">
+                    <div class="text-6xl md:text-8xl">
+                        🌾
+                    </div>
+                </div>
+                <div class="absolute -top-2 -right-4 text-4xl md:text-5xl animate-bounce">🦗</div>
+                <div class="absolute -bottom-2 -left-4 text-4xl md:text-5xl">🐸</div>
+                <div class="absolute top-1/2 -right-12 text-4xl md:text-5xl">🦅</div>
+            </div>
+
+            <!-- Loading / Start Button Section -->
+            <div class="w-full max-w-md mb-6 flex flex-col items-center">
+                <!-- Loading Bar -->
+                <div id="loading-container" class="w-full">
+                    <div class="flex justify-between text-xs text-emerald-200 mb-1 font-semibold">
+                        <span>Memuat Aset Lab Maya...</span>
+                        <span id="loading-percent">0%</span>
+                    </div>
+                    <div class="w-full bg-emerald-950 rounded-full h-3.5 p-0.5 border border-emerald-600/50">
+                        <div id="loading-bar" class="bg-gradient-to-r from-yellow-400 to-emerald-400 h-full rounded-full transition-all duration-300" style="width: 0%"></div>
+                    </div>
+                </div>
+
+                <!-- Start Button (Hidden Initially) -->
+                <button id="btn-start" onclick="startApp()" class="hidden w-full py-3.5 px-8 bg-gradient-to-r from-yellow-400 to-amber-500 hover:from-yellow-300 hover:to-amber-400 text-emerald-950 font-fredoka font-bold text-lg md:text-xl rounded-2xl shadow-lg hover:shadow-xl transform hover:-translate-y-0.5 active:translate-y-0 transition border-2 border-yellow-200 flex items-center justify-center gap-3">
+                    <i class="fas fa-play-circle text-2xl"></i>
+                    MULAI SIMULASI
+                </button>
+            </div>
+        </div>
+
+        <!-- ========================================== -->
+        <!-- HEADER / NAVBAR                            -->
+        <!-- ========================================== -->
+        <header class="bg-emerald-800 text-white px-4 py-2 flex items-center justify-between shadow-md z-20 shrink-0">
+            <div class="flex items-center gap-3">
+                <div class="bg-emerald-700 p-2 rounded-lg text-yellow-300 text-lg md:text-xl flex items-center justify-center">
+                    <i class="fas fa-leaf"></i>
+                </div>
+                <div>
+                    <h2 class="font-fredoka text-sm md:text-base leading-none text-yellow-300">Lab Maya IPAS</h2>
+                    <p class="text-[10px] md:text-xs text-emerald-200">SD N 2 Lodtunduh • Kelas 5</p>
+                </div>
+            </div>
+
+            <!-- Navigation Tabs -->
+            <nav class="flex items-center bg-emerald-900/60 p-1 rounded-xl gap-1 border border-emerald-700/50">
+                <button onclick="switchTab('teori')" id="tab-btn-teori" class="tab-btn px-3 py-1.5 rounded-lg text-xs md:text-sm font-bold flex items-center gap-1.5 transition">
+                    <i class="fas fa-book-open"></i> <span class="hidden sm:inline">Teori</span>
+                </button>
+                <button onclick="switchTab('prosedur')" id="tab-btn-prosedur" class="tab-btn px-3 py-1.5 rounded-lg text-xs md:text-sm font-bold flex items-center gap-1.5 transition">
+                    <i class="fas fa-list-ol"></i> <span class="hidden sm:inline">Prosedur</span>
+                </button>
+                <button onclick="switchTab('simulasi')" id="tab-btn-simulasi" class="tab-btn px-3 py-1.5 rounded-lg text-xs md:text-sm font-bold flex items-center gap-1.5 transition">
+                    <i class="fas fa-flask"></i> <span class="hidden sm:inline">Simulasi</span>
+                </button>
+                <button onclick="switchTab('lkpd')" id="tab-btn-lkpd" class="tab-btn px-3 py-1.5 rounded-lg text-xs md:text-sm font-bold flex items-center gap-1.5 transition">
+                    <i class="fas fa-tasks"></i> <span class="hidden sm:inline">LKPD</span>
+                </button>
+                <button onclick="switchTab('pengembang')" id="tab-btn-pengembang" class="tab-btn px-3 py-1.5 rounded-lg text-xs md:text-sm font-bold flex items-center gap-1.5 transition">
+                    <i class="fas fa-user-graduate"></i> <span class="hidden sm:inline">Pengembang</span>
+                </button>
+            </nav>
+        </header>
+
+        <!-- ========================================== -->
+        <!-- MAIN CONTENT AREA (TAB PANELS)             -->
+        <!-- ========================================== -->
+        <main class="flex-1 relative overflow-hidden bg-slate-50">
+
+            <!-- TAB 1: TEORI -->
+            <div id="panel-teori" class="tab-panel absolute inset-0 p-4 md:p-6 overflow-y-auto custom-scroll flex flex-col gap-4">
+                <div class="bg-white p-4 rounded-2xl shadow-sm border border-emerald-100 flex items-center justify-between">
+                    <div>
+                        <h3 class="font-fredoka text-lg md:text-xl text-emerald-800">Apa itu Rantai Makanan?</h3>
+                        <p class="text-xs md:text-sm text-slate-600">Rantai makanan adalah proses perpindahan energi makanan dari satu makhluk hidup ke makhluk hidup lainnya melalui urutan makan dan dimakan.</p>
+                    </div>
+                    <div class="text-3xl md:text-4xl">☀️</div>
+                </div>
+
+                <p class="text-xs md:text-sm font-bold text-slate-700 px-1">Klik kartu di bawah untuk mempelajari peran setiap tingkatan trofik:</p>
+
+                <!-- Interactive Cards Grid -->
+                <div class="grid grid-cols-2 md:grid-cols-5 gap-3 flex-1">
+                    <!-- Produsen -->
+                    <div onclick="showTheoryDetail('produsen')" class="bg-emerald-50 hover:bg-emerald-100 border-2 border-emerald-300 rounded-2xl p-3 flex flex-col items-center text-center cursor-pointer transition transform hover:-translate-y-1 shadow-sm">
+                        <span class="text-3xl md:text-4xl mb-1">🌱</span>
+                        <h4 class="font-fredoka text-xs md:text-sm text-emerald-900">Produsen</h4>
+                        <span class="text-[10px] bg-emerald-200 text-emerald-800 px-2 py-0.5 rounded-full mt-1 font-bold">Tumbuhan</span>
+                        <p class="text-[11px] text-slate-600 mt-2 line-clamp-3">Membuat makanan sendiri melalui fotosintesis dengan bantuan sinar matahari.</p>
+                    </div>
+
+                    <!-- Konsumen 1 -->
+                    <div onclick="showTheoryDetail('konsumen1')" class="bg-amber-50 hover:bg-amber-100 border-2 border-amber-300 rounded-2xl p-3 flex flex-col items-center text-center cursor-pointer transition transform hover:-translate-y-1 shadow-sm">
+                        <span class="text-3xl md:text-4xl mb-1">🦗</span>
+                        <h4 class="font-fredoka text-xs md:text-sm text-amber-900">Konsumen I</h4>
+                        <span class="text-[10px] bg-amber-200 text-amber-800 px-2 py-0.5 rounded-full mt-1 font-bold">Herbivora</span>
+                        <p class="text-[11px] text-slate-600 mt-2 line-clamp-3">Hewan pemakan tumbuhan. Mendapatkan energi langsung dari produsen.</p>
+                    </div>
+
+                    <!-- Konsumen 2 -->
+                    <div onclick="showTheoryDetail('konsumen2')" class="bg-orange-50 hover:bg-orange-100 border-2 border-orange-300 rounded-2xl p-3 flex flex-col items-center text-center cursor-pointer transition transform hover:-translate-y-1 shadow-sm">
+                        <span class="text-3xl md:text-4xl mb-1">🐸</span>
+                        <h4 class="font-fredoka text-xs md:text-sm text-orange-900">Konsumen II</h4>
+                        <span class="text-[10px] bg-orange-200 text-orange-800 px-2 py-0.5 rounded-full mt-1 font-bold">Karnivora</span>
+                        <p class="text-[11px] text-slate-600 mt-2 line-clamp-3">Hewan pemakan Konsumen I (herbivora) untuk memperoleh energi.</p>
+                    </div>
+
+                    <!-- Konsumen 3 -->
+                    <div onclick="showTheoryDetail('konsumen3')" class="bg-red-50 hover:bg-red-100 border-2 border-red-300 rounded-2xl p-3 flex flex-col items-center text-center cursor-pointer transition transform hover:-translate-y-1 shadow-sm">
+                        <span class="text-3xl md:text-4xl mb-1">🦅</span>
+                        <h4 class="font-fredoka text-xs md:text-sm text-red-900">Konsumen Puncak</h4>
+                        <span class="text-[10px] bg-red-200 text-red-800 px-2 py-0.5 rounded-full mt-1 font-bold">Apex Predator</span>
+                        <p class="text-[11px] text-slate-600 mt-2 line-clamp-3">Karnivora tingkat atas yang tidak dimakan oleh hewan lain saat hidup.</p>
+                    </div>
+
+                    <!-- Pengurai -->
+                    <div onclick="showTheoryDetail('pengurai')" class="col-span-2 md:col-span-1 bg-purple-50 hover:bg-purple-100 border-2 border-purple-300 rounded-2xl p-3 flex flex-col items-center text-center cursor-pointer transition transform hover:-translate-y-1 shadow-sm">
+                        <span class="text-3xl md:text-4xl mb-1">🍄</span>
+                        <h4 class="font-fredoka text-xs md:text-sm text-purple-900">Pengurai</h4>
+                        <span class="text-[10px] bg-purple-200 text-purple-800 px-2 py-0.5 rounded-full mt-1 font-bold">Dekomposer</span>
+                        <p class="text-[11px] text-slate-600 mt-2 line-clamp-3">Mengauraikan makhluk hidup mati menjadi nutrisi/humus bagi tanah.</p>
+                    </div>
+                </div>
+
+                <!-- Theory Detail Modal/Card Area -->
+                <div id="theory-detail-box" class="bg-gradient-to-r from-emerald-800 to-teal-800 text-white p-4 rounded-2xl shadow-md border border-emerald-600 flex items-center gap-4">
+                    <div id="theory-icon" class="text-4xl bg-white/10 p-3 rounded-xl">💡</div>
+                    <div>
+                        <h4 id="theory-title" class="font-fredoka text-base text-yellow-300">Petunjuk Belajar</h4>
+                        <p id="theory-desc" class="text-xs text-emerald-100 leading-relaxed">Klik salah satu kartu peran trofik di atas untuk membaca fakta edukatif lengkap mengenai peran makhluk hidup tersebut dalam aliran energi ekosistem.</p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- TAB 2: PROSEDUR -->
+            <div id="panel-prosedur" class="tab-panel absolute inset-0 p-4 md:p-6 overflow-y-auto custom-scroll flex flex-col gap-4 hidden">
+                <div class="bg-white p-4 rounded-2xl shadow-sm border border-emerald-100">
+                    <h3 class="font-fredoka text-lg text-emerald-800 mb-1">Petunjuk Penggunaan Lab Maya</h3>
+                    <p class="text-xs text-slate-600">Ikuti langkah-langkah praktikum virtual berikut untuk menyelesaikan tugas simulasi rantai makanan:</p>
+                </div>
+
+                <div class="grid grid-cols-1 md:grid-cols-4 gap-3 flex-1">
+                    <div class="bg-white p-4 rounded-2xl border-2 border-emerald-200 flex flex-col items-center text-center shadow-sm relative">
+                        <span class="absolute top-3 left-3 bg-emerald-600 text-white text-xs font-bold w-6 h-6 rounded-full flex items-center justify-center">1</span>
+                        <div class="text-4xl my-3">🏞️</div>
+                        <h4 class="font-fredoka text-sm text-slate-800 mb-1">Pilih Ekosistem</h4>
+                        <p class="text-xs text-slate-500">Pilih lingkungan ekosistem di Tab Simulasi (Ekosistem Sawah atau Ekosistem Hutan).</p>
+                    </div>
+
+                    <div class="bg-white p-4 rounded-2xl border-2 border-emerald-200 flex flex-col items-center text-center shadow-sm relative">
+                        <span class="absolute top-3 left-3 bg-emerald-600 text-white text-xs font-bold w-6 h-6 rounded-full flex items-center justify-center">2</span>
+                        <div class="text-4xl my-3">👆</div>
+                        <h4 class="font-fredoka text-sm text-slate-800 mb-1">Susun Organisme</h4>
+                        <p class="text-xs text-slate-500">Tarik (drag & drop) atau klik organisme lalu tempatkan di slot trofik yang tepat.</p>
+                    </div>
+
+                    <div class="bg-white p-4 rounded-2xl border-2 border-emerald-200 flex flex-col items-center text-center shadow-sm relative">
+                        <span class="absolute top-3 left-3 bg-emerald-600 text-white text-xs font-bold w-6 h-6 rounded-full flex items-center justify-center">3</span>
+                        <div class="text-4xl my-3">⚡</div>
+                        <h4 class="font-fredoka text-sm text-slate-800 mb-1">Uji Rantai Makanan</h4>
+                        <p class="text-xs text-slate-500">Klik tombol "Uji Rantai Makanan" untuk mengamati animasi alur perpindahan energi.</p>
+                    </div>
+
+                    <div class="bg-white p-4 rounded-2xl border-2 border-emerald-200 flex flex-col items-center text-center shadow-sm relative">
+                        <span class="absolute top-3 left-3 bg-emerald-600 text-white text-xs font-bold w-6 h-6 rounded-full flex items-center justify-center">4</span>
+                        <div class="text-4xl my-3">📝</div>
+                        <h4 class="font-fredoka text-sm text-slate-800 mb-1">Evaluasi & LKPD</h4>
+                        <p class="text-xs text-slate-500">Buka Tab LKPD untuk menjawab soal kuis interaktif berdasarkan hasil simulasi.</p>
+                    </div>
+                </div>
+
+                <div class="bg-amber-50 border border-amber-300 p-3 rounded-xl flex items-center gap-3">
+                    <span class="text-2xl">💡</span>
+                    <p class="text-xs text-amber-900 font-medium"><strong>Tips Guru:</strong> Jika urutan salah, baca pesan petunjuk edukatif yang muncul untuk membantu memperbaiki susunan rantai makananmu!</p>
+                </div>
+            </div>
+
+            <!-- TAB 3: SIMULASI (FITUR UTAMA) -->
+            <div id="panel-simulasi" class="tab-panel absolute inset-0 p-3 md:p-4 flex flex-col gap-3 hidden">
+                
+                <!-- Controls Header: Ecosystem Selection & Action Buttons -->
+                <div class="bg-white px-4 py-2 rounded-2xl shadow-sm border border-emerald-100 flex flex-wrap items-center justify-between gap-2 shrink-0">
+                    <div class="flex items-center gap-2">
+                        <span class="text-xs font-bold text-slate-600">Ekosistem:</span>
+                        <button id="eco-btn-sawah" onclick="selectEcosystem('sawah')" class="px-3 py-1 rounded-xl text-xs font-bold border-2 transition flex items-center gap-1 bg-emerald-600 text-white border-emerald-700 shadow-sm">
+                            🌾 Sawah
+                        </button>
+                        <button id="eco-btn-hutan" onclick="selectEcosystem('hutan')" class="px-3 py-1 rounded-xl text-xs font-bold border-2 transition flex items-center gap-1 bg-slate-100 text-slate-700 border-slate-300 hover:bg-slate-200">
+                            🌲 Hutan
+                        </button>
+                    </div>
+
+                    <div class="flex items-center gap-2">
+                        <button onclick="resetSimulation()" class="px-3 py-1.5 bg-rose-100 hover:bg-rose-200 text-rose-700 border border-rose-300 text-xs font-bold rounded-xl transition flex items-center gap-1">
+                            <i class="fas fa-undo-alt"></i> Reset
+                        </button>
+                        <button onclick="testFoodChain()" class="px-4 py-1.5 bg-gradient-to-r from-emerald-600 to-teal-600 hover:from-emerald-500 hover:to-teal-500 text-white text-xs font-bold rounded-xl shadow transition flex items-center gap-1.5 transform active:scale-95">
+                            <i class="fas fa-play"></i> Uji Rantai Makanan
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Simulation Main Canvas Area -->
+                <div id="sim-canvas" class="flex-1 bg-gradient-to-b from-sky-200 via-emerald-100 to-amber-100 rounded-2xl border-2 border-emerald-300 p-3 relative flex flex-col justify-between overflow-hidden shadow-inner">
+                    
+                    <!-- Energy Sun Header -->
+                    <div class="flex items-center justify-between z-10">
+                        <div class="flex items-center gap-2 bg-white/70 backdrop-blur px-3 py-1 rounded-full border border-white/80 shadow-sm">
+                            <span class="text-2xl animate-spin-slow">☀️</span>
+                            <span class="text-xs font-bold text-amber-900">Sumber Energi Utama (Matahari)</span>
+                        </div>
+                        <div id="sim-feedback" class="text-xs font-bold px-3 py-1 rounded-full bg-slate-800/80 text-white hidden">
+                            <!-- Dynamic Feedback Message -->
+                        </div>
+                    </div>
+
+                    <!-- Flow Arrows & Energy Beam Container -->
+                    <div id="energy-beam-layer" class="absolute inset-x-0 top-1/2 -translate-y-1/2 h-12 pointer-events-none hidden z-0">
+                        <div class="w-full h-full bg-gradient-to-r from-yellow-400/40 via-emerald-400/50 to-purple-400/40 energy-beam rounded-full blur-md"></div>
+                    </div>
+
+                    <!-- Slots Container (Chain Droppable Areas) -->
+                    <div class="grid grid-cols-5 gap-1.5 md:gap-3 my-auto z-10">
+                        
+                        <!-- Slot 1: Produsen -->
+                        <div class="flex flex-col items-center">
+                            <span class="text-[10px] md:text-xs font-bold text-emerald-900 mb-1 bg-emerald-200/80 px-2 py-0.5 rounded-full">Produsen</span>
+                            <div id="slot-0" onclick="handleSlotClick(0)" ondragover="handleDragOver(event)" ondragleave="handleDragLeave(event)" ondrop="handleDrop(event, 0)" class="drop-zone w-full aspect-square bg-white/60 border-2 border-dashed border-emerald-400 rounded-2xl flex flex-col items-center justify-center p-1 transition shadow-sm relative group cursor-pointer hover:border-emerald-600">
+                                <span class="placeholder-text text-slate-400 text-[10px] text-center">Taruh Produsen</span>
+                            </div>
+                        </div>
+
+                        <!-- Slot 2: Konsumen 1 -->
+                        <div class="flex flex-col items-center">
+                            <span class="text-[10px] md:text-xs font-bold text-amber-900 mb-1 bg-amber-200/80 px-2 py-0.5 rounded-full">Konsumen I</span>
+                            <div id="slot-1" onclick="handleSlotClick(1)" ondragover="handleDragOver(event)" ondragleave="handleDragLeave(event)" ondrop="handleDrop(event, 1)" class="drop-zone w-full aspect-square bg-white/60 border-2 border-dashed border-amber-400 rounded-2xl flex flex-col items-center justify-center p-1 transition shadow-sm relative group cursor-pointer hover:border-amber-600">
+                                <span class="placeholder-text text-slate-400 text-[10px] text-center">Taruh Herbivora</span>
+                            </div>
+                        </div>
+
+                        <!-- Slot 3: Konsumen 2 -->
+                        <div class="flex flex-col items-center">
+                            <span class="text-[10px] md:text-xs font-bold text-orange-900 mb-1 bg-orange-200/80 px-2 py-0.5 rounded-full">Konsumen II</span>
+                            <div id="slot-2" onclick="handleSlotClick(2)" ondragover="handleDragOver(event)" ondragleave="handleDragLeave(event)" ondrop="handleDrop(event, 2)" class="drop-zone w-full aspect-square bg-white/60 border-2 border-dashed border-orange-400 rounded-2xl flex flex-col items-center justify-center p-1 transition shadow-sm relative group cursor-pointer hover:border-orange-600">
+                                <span class="placeholder-text text-slate-400 text-[10px] text-center">Taruh Karnivora</span>
+                            </div>
+                        </div>
+
+                        <!-- Slot 4: Konsumen 3 -->
+                        <div class="flex flex-col items-center">
+                            <span class="text-[10px] md:text-xs font-bold text-red-900 mb-1 bg-red-200/80 px-2 py-0.5 rounded-full">Konsumen III</span>
+                            <div id="slot-3" onclick="handleSlotClick(3)" ondragover="handleDragOver(event)" ondragleave="handleDragLeave(event)" ondrop="handleDrop(event, 3)" class="drop-zone w-full aspect-square bg-white/60 border-2 border-dashed border-red-400 rounded-2xl flex flex-col items-center justify-center p-1 transition shadow-sm relative group cursor-pointer hover:border-red-600">
+                                <span class="placeholder-text text-slate-400 text-[10px] text-center">Taruh Apex</span>
+                            </div>
+                        </div>
+
+                        <!-- Slot 5: Pengurai -->
+                        <div class="flex flex-col items-center">
+                            <span class="text-[10px] md:text-xs font-bold text-purple-900 mb-1 bg-purple-200/80 px-2 py-0.5 rounded-full">Pengurai</span>
+                            <div id="slot-4" onclick="handleSlotClick(4)" ondragover="handleDragOver(event)" ondragleave="handleDragLeave(event)" ondrop="handleDrop(event, 4)" class="drop-zone w-full aspect-square bg-white/60 border-2 border-dashed border-purple-400 rounded-2xl flex flex-col items-center justify-center p-1 transition shadow-sm relative group cursor-pointer hover:border-purple-600">
+                                <span class="placeholder-text text-slate-400 text-[10px] text-center">Taruh Dekomposer</span>
+                            </div>
+                        </div>
+
+                    </div>
+
+                    <!-- Bottom Ground Decoration -->
+                    <div class="text-right text-[10px] text-emerald-800 font-semibold z-10">
+                        *Klik atau Drag organisme dari rak bawah ke dalam slot di atas
+                    </div>
+                </div>
+
+                <!-- Organism Drawer / Options Shelf -->
+                <div class="bg-white p-2.5 rounded-2xl border border-emerald-200 shadow-sm shrink-0">
+                    <div class="flex items-center justify-between mb-1.5 px-1">
+                        <span class="text-xs font-bold text-slate-700">Pilihan Organisme Tersedia:</span>
+                        <span class="text-[10px] text-slate-500">Klik item untuk pilih & pasang cepat</span>
+                    </div>
+                    <div id="organism-shelf" class="flex items-center justify-around gap-2 overflow-x-auto py-1 custom-scroll">
+                        <!-- Organism cards populated by JS -->
+                    </div>
+                </div>
+
+            </div>
+
+            <!-- TAB 4: LKPD (LEMBAR KERJA PESERTA DIDIK) -->
+            <div id="panel-lkpd" class="tab-panel absolute inset-0 p-4 md:p-6 overflow-y-auto custom-scroll flex flex-col gap-4 hidden">
+                
+                <!-- LKPD Header & Score Banner -->
+                <div class="bg-gradient-to-r from-emerald-800 to-teal-800 text-white p-4 rounded-2xl shadow-sm flex flex-wrap items-center justify-between gap-3">
+                    <div>
+                        <h3 class="font-fredoka text-lg md:text-xl text-yellow-300">Lembar Kerja Peserta Didik (LKPD)</h3>
+                        <p class="text-xs text-emerald-100">Uji pemahamanmu tentang Rantai Makanan & Aliran Energi Ekosistem.</p>
+                    </div>
+                    <div class="flex items-center gap-3 bg-white/10 px-4 py-2 rounded-xl backdrop-blur border border-white/20">
+                        <div class="text-right">
+                            <div class="text-[10px] uppercase font-bold text-emerald-200">Skor Anda</div>
+                            <div id="lkpd-score-display" class="font-fredoka text-2xl text-yellow-300 leading-none">0 / 100</div>
+                        </div>
+                        <i class="fas fa-trophy text-3xl text-yellow-400"></i>
+                    </div>
+                </div>
+
+                <!-- Questions List -->
+                <div class="space-y-4 flex-1">
+                    
+                    <!-- Soal 1 -->
+                    <div class="bg-white p-4 rounded-2xl border border-slate-200 shadow-sm space-y-2">
+                        <p class="text-xs md:text-sm font-bold text-slate-800">1. Makhluk hidup yang berperan menghasilkan makanan sendiri melalui bantuan sinar matahari disebut...</p>
+                        <div class="grid grid-cols-2 md:grid-cols-4 gap-2">
+                            <label class="q-option flex items-center p-2 rounded-xl border border-slate-200 hover:bg-emerald-50 cursor-pointer text-xs">
+                                <input type="radio" name="q1" value="A" class="mr-2 accent-emerald-600"> A. Konsumen I
+                            </label>
+                            <label class="q-option flex items-center p-2 rounded-xl border border-slate-200 hover:bg-emerald-50 cursor-pointer text-xs">
+                                <input type="radio" name="q1" value="B" class="mr-2 accent-emerald-600"> B. Produsen
+                            </label>
+                            <label class="q-option flex items-center p-2 rounded-xl border border-slate-200 hover:bg-emerald-50 cursor-pointer text-xs">
+                                <input type="radio" name="q1" value="C" class="mr-2 accent-emerald-600"> C. Pengurai
+                            </label>
+                            <label class="q-option flex items-center p-2 rounded-xl border border-slate-200 hover:bg-emerald-50 cursor-pointer text-xs">
+                                <input type="radio" name="q1" value="D" class="mr-2 accent-emerald-600"> D. Predator
+                            </label>
+                        </div>
+                    </div>
+
+                    <!-- Soal 2 -->
+                    <div class="bg-white p-4 rounded-2xl border border-slate-200 shadow-sm space-y-2">
+                        <p class="text-xs md:text-sm font-bold text-slate-800">2. Pada ekosistem sawah, jika populasi katak menurun drastis karena ditangkap manusia, kemungkinan yang akan terjadi adalah...</p>
+                        <div class="grid grid-cols-1 md:grid-cols-2 gap-2">
+                            <label class="q-option flex items-center p-2 rounded-xl border border-slate-200 hover:bg-emerald-50 cursor-pointer text-xs">
+                                <input type="radio" name="q2" value="A" class="mr-2 accent-emerald-600"> A. Populasi belalang meningkat tajam
+                            </label>
+                            <label class="q-option flex items-center p-2 rounded-xl border border-slate-200 hover:bg-emerald-50 cursor-pointer text-xs">
+                                <input type="radio" name="q2" value="B" class="mr-2 accent-emerald-600"> B. Hasil panen padi melimpah
+                            </label>
+                            <label class="q-option flex items-center p-2 rounded-xl border border-slate-200 hover:bg-emerald-50 cursor-pointer text-xs">
+                                <input type="radio" name="q2" value="C" class="mr-2 accent-emerald-600"> C. Populasi ular bertambah banyak
+                            </label>
+                            <label class="q-option flex items-center p-2 rounded-xl border border-slate-200 hover:bg-emerald-50 cursor-pointer text-xs">
+                                <input type="radio" name="q2" value="D" class="mr-2 accent-emerald-600"> D. Tanaman padi langsung habis
+                            </label>
+                        </div>
+                    </div>
+
+                    <!-- Soal 3 -->
+                    <div class="bg-white p-4 rounded-2xl border border-slate-200 shadow-sm space-y-2">
+                        <p class="text-xs md:text-sm font-bold text-slate-800">3. Organisme seperti Jamur dan Bakteri menguraikan bangkai makhluk hidup menjadi nutrien tanah. Apa peran organisme tersebut?</p>
+                        <div class="grid grid-cols-2 md:grid-cols-4 gap-2">
+                            <label class="q-option flex items-center p-2 rounded-xl border border-slate-200 hover:bg-emerald-50 cursor-pointer text-xs">
+                                <input type="radio" name="q3" value="A" class="mr-2 accent-emerald-600"> A. Produsen
+                            </label>
+                            <label class="q-option flex items-center p-2 rounded-xl border border-slate-200 hover:bg-emerald-50 cursor-pointer text-xs">
+                                <input type="radio" name="q3" value="B" class="mr-2 accent-emerald-600"> B. Herbivora
+                            </label>
+                            <label class="q-option flex items-center p-2 rounded-xl border border-slate-200 hover:bg-emerald-50 cursor-pointer text-xs">
+                                <input type="radio" name="q3" value="C" class="mr-2 accent-emerald-600"> C. Dekomposer / Pengurai
+                            </label>
+                            <label class="q-option flex items-center p-2 rounded-xl border border-slate-200 hover:bg-emerald-50 cursor-pointer text-xs">
+                                <input type="radio" name="q3" value="D" class="mr-2 accent-emerald-600"> D. Konsumen Primer
+                            </label>
+                        </div>
+                    </div>
+
+                </div>
+
+                <!-- LKPD Action Buttons -->
+                <div class="flex items-center justify-end gap-3 pt-2">
+                    <button onclick="resetLKPD()" class="px-4 py-2 bg-slate-200 hover:bg-slate-300 text-slate-700 text-xs font-bold rounded-xl transition">
+                        Reset Jawaban
+                    </button>
+                    <button onclick="checkLKPD()" class="px-6 py-2 bg-emerald-600 hover:bg-emerald-500 text-white text-xs font-bold rounded-xl shadow transition transform active:scale-95">
+                        Cek Jawaban & Hitung Nilai
+                    </button>
+                </div>
+
+            </div>
+
+            <!-- TAB 5: PENGEMBANG -->
+            <div id="panel-pengembang" class="tab-panel absolute inset-0 p-4 md:p-6 overflow-y-auto custom-scroll flex flex-col gap-4 hidden">
+                <div class="bg-white p-5 rounded-2xl border border-emerald-100 shadow-sm flex flex-col md:flex-row items-center gap-6">
+                    <div class="w-28 h-28 bg-emerald-800 text-yellow-300 rounded-2xl flex items-center justify-center text-5xl shadow-md border-4 border-yellow-400 shrink-0">
+                        👨‍🏫
+                    </div>
+                    <div class="space-y-2 text-center md:text-left">
+                        <span class="bg-emerald-100 text-emerald-800 text-[10px] font-bold px-2.5 py-1 rounded-full uppercase tracking-wider">Pengembang Media</span>
+                        <h3 class="font-fredoka text-xl text-emerald-900">Guru SD N 2 Lodtunduh</h3>
+                        <p class="text-xs text-slate-600 leading-relaxed">
+                            Media pembelajaran **Lab Maya Interaktif Rantai Makanan** ini dikembangkan khusus untuk mendukung pembelajaran berbasis teknologi pada mata pelajaran **IPAS Kelas 5 SD Fase C**.
+                        </p>
+                        <div class="flex flex-wrap justify-center md:justify-start gap-2 pt-1">
+                            <span class="bg-slate-100 border border-slate-200 text-slate-700 text-xs px-2.5 py-1 rounded-lg"><i class="fas fa-school text-emerald-600 mr-1"></i> SD N 2 Lodtunduh</span>
+                            <span class="bg-slate-100 border border-slate-200 text-slate-700 text-xs px-2.5 py-1 rounded-lg"><i class="fas fa-book text-emerald-600 mr-1"></i> Kurikulum Merdeka</span>
+                            <span class="bg-slate-100 border border-slate-200 text-slate-700 text-xs px-2.5 py-1 rounded-lg"><i class="fas fa-laptop-code text-emerald-600 mr-1"></i> Full Offline HTML5</span>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="bg-emerald-900 text-white p-5 rounded-2xl shadow-sm space-y-2">
+                    <h4 class="font-fredoka text-yellow-300 text-sm md:text-base"><i class="fas fa-bulltarget text-yellow-400 mr-2"></i> Capaian Pembelajaran (CP) IPAS Fase C</h4>
+                    <p class="text-xs text-emerald-100 leading-relaxed">
+                        Peserta didik menganalisis hubungan antara makhluk hidup dengan lingkungannya, memahami alur perpindahan energi dalam bentuk rantai makanan dan jaring-jaring makanan, serta mampu memprediksi dampak ketidakseimbangan ekosistem.
+                    </p>
+                </div>
+            </div>
+
+        </main>
+
+        <!-- FOOTER / STATUS BAR -->
+        <footer class="bg-emerald-950 text-emerald-300 px-4 py-1.5 text-[10px] flex items-center justify-between border-t border-emerald-800 shrink-0">
+            <span>Lab Maya IPAS • SD N 2 Lodtunduh</span>
+            <span id="footer-status" class="text-yellow-400 font-semibold">Mode: Siap Praktikum</span>
+        </footer>
+
+    </div>
+
+    <!-- SCRIPT LOGIC -->
+    <script>
+        /* ========================================== */
+        /* WEB AUDIO API SYNTHESIZER (FULL OFFLINE)  */
+        /* ========================================== */
+        let audioCtx = null;
+        let isMuted = false;
+
+        function initAudio() {
+            if (!audioCtx) {
+                audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+            }
+        }
+
+        function playSound(type) {
+            if (isMuted) return;
+            initAudio();
+            if (audioCtx.state === 'suspended') {
+                audioCtx.resume();
+            }
+
+            const now = audioCtx.currentTime;
+
+            if (type === 'click') {
+                // Short pop/click tone
+                const osc = audioCtx.createOscillator();
+                const gain = audioCtx.createGain();
+                osc.type = 'sine';
+                osc.frequency.setValueAtTime(600, now);
+                osc.frequency.exponentialRampToValueAtTime(200, now + 0.05);
+                gain.gain.setValueAtTime(0.3, now);
+                gain.gain.linearRampToValueAtTime(0.01, now + 0.05);
+                osc.connect(gain);
+                gain.connect(audioCtx.destination);
+                osc.start(now);
+                osc.stop(now + 0.05);
+            } else if (type === 'drop') {
+                // Drop sound
+                const osc = audioCtx.createOscillator();
+                const gain = audioCtx.createGain();
+                osc.type = 'triangle';
+                osc.frequency.setValueAtTime(300, now);
+                osc.frequency.linearRampToValueAtTime(500, now + 0.08);
+                gain.gain.setValueAtTime(0.4, now);
+                gain.gain.linearRampToValueAtTime(0.01, now + 0.08);
+                osc.connect(gain);
+                gain.connect(audioCtx.destination);
+                osc.start(now);
+                osc.stop(now + 0.08);
+            } else if (type === 'success') {
+                // Happy Chime Arpeggio
+                const notes = [523.25, 659.25, 783.99, 1046.50]; // C5, E5, G5, C6
+                notes.forEach((freq, idx) => {
+                    const osc = audioCtx.createOscillator();
+                    const gain = audioCtx.createGain();
+                    osc.type = 'sine';
+                    osc.frequency.value = freq;
+                    gain.gain.setValueAtTime(0.2, now + idx * 0.08);
+                    gain.gain.exponentialRampToValueAtTime(0.001, now + idx * 0.08 + 0.3);
+                    osc.connect(gain);
+                    gain.connect(audioCtx.destination);
+                    osc.start(now + idx * 0.08);
+                    osc.stop(now + idx * 0.08 + 0.3);
+                });
+            } else if (type === 'error') {
+                // Low Buzz tone
+                const osc = audioCtx.createOscillator();
+                const gain = audioCtx.createGain();
+                osc.type = 'sawtooth';
+                osc.frequency.setValueAtTime(180, now);
+                osc.frequency.linearRampToValueAtTime(110, now + 0.25);
+                gain.gain.setValueAtTime(0.3, now);
+                gain.gain.linearRampToValueAtTime(0.01, now + 0.25);
+                osc.connect(gain);
+                gain.connect(audioCtx.destination);
+                osc.start(now);
+                osc.stop(now + 0.25);
+            } else if (type === 'reset') {
+                // Swoosh down tone
+                const osc = audioCtx.createOscillator();
+                const gain = audioCtx.createGain();
+                osc.type = 'sine';
+                osc.frequency.setValueAtTime(500, now);
+                osc.frequency.exponentialRampToValueAtTime(120, now + 0.15);
+                gain.gain.setValueAtTime(0.3, now);
+                gain.gain.linearRampToValueAtTime(0.01, now + 0.15);
+                osc.connect(gain);
+                gain.connect(audioCtx.destination);
+                osc.start(now);
+                osc.stop(now + 0.15);
+            }
+        }
+
+        function toggleAudio() {
+            isMuted = !isMuted;
+            const icon = document.getElementById('audio-icon');
+            if (isMuted) {
+                icon.className = 'fas fa-volume-mute text-rose-600';
+            } else {
+                icon.className = 'fas fa-volume-up text-emerald-800';
+                playSound('click');
+            }
+        }
+
+        /* ========================================== */
+        /* APPLICATION DATA & STATE                  */
+        /* ========================================== */
+        const ecosystems = {
+            sawah: {
+                name: "Ekosistem Sawah",
+                organisms: [
+                    { id: 'padi', name: 'Padi', icon: '🌾', role: 0, desc: 'Produsen' },
+                    { id: 'belalang', name: 'Belalang', icon: '🦗', role: 1, desc: 'Herbivora' },
+                    { id: 'katak', name: 'Katak', icon: '🐸', role: 2, desc: 'Karnivora' },
+                    { id: 'ular', name: 'Ular Sawah', icon: '🐍', role: 3, desc: 'Apex Predator' },
+                    { id: 'jamur', name: 'Jamur / Bakteri', icon: '🍄', role: 4, desc: 'Pengurai' }
+                ]
+            },
+            hutan: {
+                name: "Ekosistem Hutan",
+                organisms: [
+                    { id: 'rumput', name: 'Rumput / Pohon', icon: '🌿', role: 0, desc: 'Produsen' },
+                    { id: 'kelinci', name: 'Kelinci', icon: '🐇', role: 1, desc: 'Herbivora' },
+                    { id: 'serigala', name: 'Serigala', icon: '🐺', role: 2, desc: 'Karnivora' },
+                    { id: 'elang', name: 'Burung Elang', icon: '🦅', role: 3, desc: 'Apex Predator' },
+                    { id: 'jamur_hutan', name: 'Jamur Dekomposer', icon: '🍄', role: 4, desc: 'Pengurai' }
+                ]
+            }
+        };
+
+        let currentEcosystem = 'sawah';
+        let currentSlots = [null, null, null, null, null]; // 5 slots
+        let selectedOrganism = null;
+
+        /* ========================================== */
+        /* INITIALIZATION & SPLASH SCREEN             */
+        /* ========================================== */
+        window.onload = function() {
+            // Simulate assets loading progress
+            let progress = 0;
+            const bar = document.getElementById('loading-bar');
+            const percent = document.getElementById('loading-percent');
+            const interval = setInterval(() => {
+                progress += Math.floor(Math.random() * 20) + 10;
+                if (progress >= 100) {
+                    progress = 100;
+                    clearInterval(interval);
+                    setTimeout(() => {
+                        document.getElementById('loading-container').classList.add('hidden');
+                        document.getElementById('btn-start').classList.remove('hidden');
+                    }, 300);
+                }
+                bar.style.width = progress + '%';
+                percent.innerText = progress + '%';
+            }, 100);
+
+            // Set default active tab
+            switchTab('simulasi');
+            renderShelf();
+        };
+
+        function startApp() {
+            playSound('success');
+            document.getElementById('splash-screen').style.display = 'none';
+        }
+
+        /* ========================================== */
+        /* TAB NAVIGATION                             */
+        /* ========================================== */
+        function switchTab(tabId) {
+            playSound('click');
+            const tabs = ['teori', 'prosedur', 'simulasi', 'lkpd', 'pengembang'];
+            
+            tabs.forEach(t => {
+                const btn = document.getElementById(`tab-btn-${t}`);
+                const panel = document.getElementById(`panel-${t}`);
+                if (t === tabId) {
+                    btn.className = "tab-btn px-3 py-1.5 rounded-lg text-xs md:text-sm font-bold flex items-center gap-1.5 transition bg-yellow-400 text-emerald-950 shadow-sm";
+                    panel.classList.remove('hidden');
+                } else {
+                    btn.className = "tab-btn px-3 py-1.5 rounded-lg text-xs md:text-sm font-bold flex items-center gap-1.5 transition text-emerald-100 hover:bg-emerald-700/50";
+                    panel.classList.add('hidden');
+                }
+            });
+
+            document.getElementById('footer-status').innerText = `Modul Active: Tab ${tabId.toUpperCase()}`;
+        }
+
+        /* ========================================== */
+        /* TAB TEORI INTERACTION                      */
+        /* ========================================== */
+        const theoryData = {
+            produsen: {
+                title: "🌱 Produsen (Tumbuhan Hijau)",
+                desc: "Produsen adalah makhluk hidup autotrof yang memproduksi makanan sendiri melalui fotosintesis menggunakan bantuan cahaya matahari. Memegang peranan awal sebagai penyedia energi utama bagi seluruh rantai makanan."
+            },
+            konsumen1: {
+                title: "🦗 Konsumen I (Herbivora)",
+                desc: "Konsumen tingkat pertama adalah hewan pemakan tumbuhan (herbivora). Organisme ini mendapatkan energi langsung dengan mengonsumsi produsen."
+            },
+            konsumen2: {
+                title: "🐸 Konsumen II (Karnivora Sekunder)",
+                desc: "Konsumen tingkat kedua adalah hewan karnivora atau omnivora yang memangsa konsumen tingkat I untuk memperoleh energi."
+            },
+            konsumen3: {
+                title: "🦅 Konsumen III / Puncak (Apex Predator)",
+                desc: "Konsumen tingkat atas yang berada di puncak rantai makanan. Pada keadaan alami, konsumen puncak hampir tidak memiliki predator pemangsa lainnya."
+            },
+            pengurai: {
+                title: "🍄 Pengurai (Dekomposer)",
+                desc: "Pengurai seperti jamur dan bakteri bertugas membusukkan bangkai makhluk hidup yang mati. Hasil penguraian ini mengembalikan zat hara dan nutrisi penting ke dalam tanah untuk diserap kembali oleh produsen."
+            }
+        };
+
+        function showTheoryDetail(key) {
+            playSound('click');
+            const data = theoryData[key];
+            if (data) {
+                document.getElementById('theory-title').innerText = data.title;
+                document.getElementById('theory-desc').innerText = data.desc;
+            }
+        }
+
+        /* ========================================== */
+        /* TAB SIMULASI LOGIC                         */
+        /* ========================================== */
+        function selectEcosystem(type) {
+            playSound('click');
+            currentEcosystem = type;
+            
+            const btnSawah = document.getElementById('eco-btn-sawah');
+            const btnHutan = document.getElementById('eco-btn-hutan');
+
+            if (type === 'sawah') {
+                btnSawah.className = "px-3 py-1 rounded-xl text-xs font-bold border-2 transition flex items-center gap-1 bg-emerald-600 text-white border-emerald-700 shadow-sm";
+                btnHutan.className = "px-3 py-1 rounded-xl text-xs font-bold border-2 transition flex items-center gap-1 bg-slate-100 text-slate-700 border-slate-300 hover:bg-slate-200";
+            } else {
+                btnHutan.className = "px-3 py-1 rounded-xl text-xs font-bold border-2 transition flex items-center gap-1 bg-emerald-600 text-white border-emerald-700 shadow-sm";
+                btnSawah.className = "px-3 py-1 rounded-xl text-xs font-bold border-2 transition flex items-center gap-1 bg-slate-100 text-slate-700 border-slate-300 hover:bg-slate-200";
+            }
+
+            resetSimulation();
+        }
+
+        function renderShelf() {
+            const shelf = document.getElementById('organism-shelf');
+            shelf.innerHTML = '';
+            
+            // Randomize/Shuffle array display for difficulty
+            const items = [...ecosystems[currentEcosystem].organisms].sort(() => Math.random() - 0.5);
+
+            items.forEach(org => {
+                const isPlaced = currentSlots.some(s => s && s.id === org.id);
+                const isSelected = selectedOrganism && selectedOrganism.id === org.id;
+
+                const card = document.createElement('div');
+                card.draggable = !isPlaced;
+                card.ondragstart = (e) => handleDragStart(e, org);
+                card.onclick = () => handleShelfItemClick(org);
+
+                card.className = `organism-card p-2 rounded-xl border-2 flex flex-col items-center min-w-[70px] md:min-w-[85px] transition shadow-sm ${
+                    isPlaced 
+                    ? 'bg-slate-100 border-slate-200 opacity-40 cursor-not-allowed' 
+                    : isSelected 
+                    ? 'bg-yellow-100 border-yellow-500 scale-105 ring-2 ring-yellow-400' 
+                    : 'bg-white border-emerald-200 hover:border-emerald-400 hover:bg-emerald-50'
+                }`;
+
+                card.innerHTML = `
+                    <span class="text-2xl md:text-3xl">${org.icon}</span>
+                    <span class="text-[10px] md:text-xs font-bold text-slate-800 mt-1 truncate max-w-full">${org.name}</span>
+                `;
+
+                shelf.appendChild(card);
+            });
+        }
+
+        function renderSlots() {
+            for (let i = 0; i < 5; i++) {
+                const slotEl = document.getElementById(`slot-${i}`);
+                const org = currentSlots[i];
+
+                if (org) {
+                    slotEl.innerHTML = `
+                        <div class="flex flex-col items-center animate-bounce-short">
+                            <span class="text-3xl md:text-4xl">${org.icon}</span>
+                            <span class="text-[10px] md:text-xs font-bold text-slate-800 mt-1">${org.name}</span>
+                        </div>
+                        <button onclick="removeSlotItem(${i}, event)" class="absolute -top-1.5 -right-1.5 bg-rose-500 hover:bg-rose-600 text-white w-5 h-5 rounded-full text-[10px] flex items-center justify-center shadow">
+                            ×
+                        </button>
+                    `;
+                    slotEl.classList.remove('border-dashed');
+                    slotEl.classList.add('border-solid', 'bg-white/90', 'border-emerald-500');
+                } else {
+                    const placeholderTitles = ['Taruh Produsen', 'Taruh Herbivora', 'Taruh Karnivora', 'Taruh Apex', 'Taruh Dekomposer'];
+                    slotEl.innerHTML = `<span class="placeholder-text text-slate-400 text-[10px] text-center">${placeholderTitles[i]}</span>`;
+                    slotEl.classList.add('border-dashed');
+                    slotEl.classList.remove('border-solid', 'bg-white/90', 'border-emerald-500');
+                }
+            }
+        }
+
+        /* Click to select/place logic */
+        function handleShelfItemClick(org) {
+            const isPlaced = currentSlots.some(s => s && s.id === org.id);
+            if (isPlaced) return;
+
+            playSound('click');
+            if (selectedOrganism && selectedOrganism.id === org.id) {
+                selectedOrganism = null;
+            } else {
+                selectedOrganism = org;
+            }
+            renderShelf();
+        }
+
+        function handleSlotClick(slotIdx) {
+            if (selectedOrganism) {
+                // Place into clicked slot
+                currentSlots[slotIdx] = selectedOrganism;
+                playSound('drop');
+                selectedOrganism = null;
+                renderSlots();
+                renderShelf();
+            }
+        }
+
+        function removeSlotItem(slotIdx, e) {
+            e.stopPropagation();
+            playSound('reset');
+            currentSlots[slotIdx] = null;
+            renderSlots();
+            renderShelf();
+        }
+
+        /* Drag & Drop HTML5 Handler */
+        function handleDragStart(e, org) {
+            playSound('click');
+            e.dataTransfer.setData('text/plain', JSON.stringify(org));
+        }
+
+        function handleDragOver(e) {
+            e.preventDefault();
+            e.currentTarget.classList.add('drag-over');
+        }
+
+        function handleDragLeave(e) {
+            e.currentTarget.classList.remove('drag-over');
+        }
+
+        function handleDrop(e, slotIdx) {
+            e.preventDefault();
+            e.currentTarget.classList.remove('drag-over');
+            const data = e.dataTransfer.getData('text/plain');
+            if (data) {
+                const org = JSON.parse(data);
+                currentSlots[slotIdx] = org;
+                playSound('drop');
+                renderSlots();
+                renderShelf();
+            }
+        }
+
+        /* SIMULATION VERIFICATION LOGIC */
+        function testFoodChain() {
+            const feedback = document.getElementById('sim-feedback');
+            feedback.classList.remove('hidden');
+
+            // Check if all slots filled
+            if (currentSlots.some(s => s === null)) {
+                playSound('error');
+                feedback.className = "text-xs font-bold px-4 py-1.5 rounded-full bg-amber-500 text-white shadow animate-pulse";
+                feedback.innerText = "⚠️ Slot belum lengkap! Tempatkan makhluk hidup pada semua 5 slot.";
+                return;
+            }
+
+            // Check correctness based on expected role indices (0, 1, 2, 3, 4)
+            let isCorrect = true;
+            let errorMsg = "";
+
+            for (let i = 0; i < 5; i++) {
+                if (currentSlots[i].role !== i) {
+                    isCorrect = false;
+                    const wrongOrg = currentSlots[i];
+                    if (i === 0) errorMsg = `Aduh! ${wrongOrg.name} bukanlah Produsen!`;
+                    else if (i === 1) errorMsg = `Aduh! ${wrongOrg.name} tidak memakan produsen secara langsung!`;
+                    else if (i === 2) errorMsg = `Kurang tepat! ${wrongOrg.name} posisi trofiknya kurang pas.`;
+                    else if (i === 3) errorMsg = `Apex predator belum ditempatkan dengan benar!`;
+                    else if (i === 4) errorMsg = `Pengurai/Dekomposer belum berada di slot akhir!`;
+                    break;
+                }
+            }
+
+            if (isCorrect) {
+                playSound('success');
+                feedback.className = "text-xs font-bold px-4 py-1.5 rounded-full bg-emerald-600 text-white shadow flex items-center gap-1";
+                feedback.innerText = "🎉 Luar Biasa! Rantai Makanan Sempurna & Energi Mengalir Seimbang!";
+                
+                // Show Energy Flow Animation
+                document.getElementById('energy-beam-layer').classList.remove('hidden');
+                setTimeout(() => {
+                    document.getElementById('energy-beam-layer').classList.add('hidden');
+                }, 4000);
+
+            } else {
+                playSound('error');
+                feedback.className = "text-xs font-bold px-4 py-1.5 rounded-full bg-rose-600 text-white shadow";
+                feedback.innerText = `❌ ${errorMsg} Coba periksa kembali!`;
+            }
+        }
+
+        function resetSimulation() {
+            playSound('reset');
+            currentSlots = [null, null, null, null, null];
+            selectedOrganism = null;
+            document.getElementById('sim-feedback').classList.add('hidden');
+            document.getElementById('energy-beam-layer').classList.add('hidden');
+            renderSlots();
+            renderShelf();
+        }
+
+        /* ========================================== */
+        /* TAB LKPD LOGIC                             */
+        /* ========================================== */
+        function checkLKPD() {
+            let score = 0;
+
+            // Q1 Correct: B
+            const q1 = document.querySelector('input[name="q1"]:checked');
+            if (q1 && q1.value === 'B') score += 35;
+
+            // Q2 Correct: A
+            const q2 = document.querySelector('input[name="q2"]:checked');
+            if (q2 && q2.value === 'A') score += 35;
+
+            // Q3 Correct: C
+            const q3 = document.querySelector('input[name="q3"]:checked');
+            if (q3 && q3.value === 'C') score += 30;
+
+            document.getElementById('lkpd-score-display').innerText = `${score} / 100`;
+
+            if (score === 100) {
+                playSound('success');
+                alert("Selamat! Semua jawaban LKPD kamu BENAR SANGAT BAIK! 🎉");
+            } else if (score > 0) {
+                playSound('click');
+                alert(`Kamu mendapatkan nilai ${score}. Ayo pelajari lagi Tab Teori dan perbaiki jawabanmu!`);
+            } else {
+                playSound('error');
+                alert("Kamu belum memilih jawaban atau jawaban belum tepat. Coba lagi ya!");
+            }
+        }
+
+        function resetLKPD() {
+            playSound('reset');
+            const radios = document.querySelectorAll('input[type="radio"]');
+            radios.forEach(r => r.checked = false);
+            document.getElementById('lkpd-score-display').innerText = '0 / 100';
+        }
+    </script>
+</body>
+</html>
